@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.triona.main.Worker;
+import com.triona.company.Worker;
 
 /**
  * 
@@ -177,7 +177,6 @@ public class Main {
 	}
 	
 	 largestTeam_leader = teamSize.entrySet().stream().max((mangA, mangB) -> mangA.getValue() > mangB.getValue() ? 1 : -1).get().getKey();
-	
 	 System.out.println(largestTeam_leader);
     }
 

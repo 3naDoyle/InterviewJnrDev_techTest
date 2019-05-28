@@ -1,4 +1,4 @@
-package com.triona.main;
+package com.triona.company;
 
 public class Worker {
 	
