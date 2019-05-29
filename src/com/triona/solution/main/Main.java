@@ -155,17 +155,11 @@ public class Main {
      */
     public void printLeaderWithMostMembers() {
 	//get all managers (names)
-	List<String> allManagers = new ArrayList<String>();
-	for(Worker w: workers){
-	    if(!w.getManagerName().isEmpty()){
-		allManagers.add(w.getManagerName());
-	    }
-	}
-	
-	// remove duplicates
-	allManagers = allManagers.stream() 
-                .distinct() 
-                .collect(Collectors.toList()); 
+	List<String> allManagers = workers.stream()
+		.map(w -> w.getManagerName())
+		.filter(value -> !value.isEmpty())
+		.distinct()
+		.collect(Collectors.toList()); 
 	
 	//count no of workers each manager has
 	String largestTeam_leader;
@@ -184,7 +178,31 @@ public class Main {
      * MEMBERS to determine team age
      */
     public void printLeaderWithYoungestTeam() {
+	//get all managers (names)
+	List<String> allManagers = workers.stream()
+		.map(w -> w.getManagerName())
+		.filter(value -> !value.isEmpty())
+		.distinct()
+		.collect(Collectors.toList()); 
+	
+	//get team ages for each manager
+	Map<String,Integer> leaders_and_collectiveTeamAges = new HashMap<String,Integer>();
 
+	
+	for(String manager: allManagers){
+	  int teamAgeSum=
+	    workers.stream()
+	    .filter(w -> w.getManagerName().equalsIgnoreCase(manager))
+	    .collect(Collectors.toList())
+	    .stream()
+	    .mapToInt(w -> w.getAge())
+	    .sum();
+	  
+	  leaders_and_collectiveTeamAges.put(manager, teamAgeSum);	    
+	}
+	
+	String leaderWithYoungestTeam = leaders_and_collectiveTeamAges.entrySet().stream().min((mangA, mangB) -> mangA.getValue() > mangB.getValue() ? 1 : -1).get().getKey();
+	System.out.println(leaderWithYoungestTeam);
     }
 
     public List<Worker> getWorkers() {
