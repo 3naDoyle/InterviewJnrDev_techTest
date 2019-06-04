@@ -1,6 +1,5 @@
-package com.triona.solution.main;
+package com.triona.solution;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,6 +10,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.triona.company.Worker;
+
+
 
 /**
  * 
@@ -97,12 +98,15 @@ public class Main {
      * @param age
      *            - age in years
      */
-    public void printTeamMembersYoungerThan(int age) {
-	//filter1 - team member (not manager)
-	Predicate<Worker> isTeamMember = w -> w.isTeamMember() == true;
-	//filter2 - younger than a specified age
-	Predicate<Worker> isYoungerThanSpecifiedAge = e -> e.getAge() < age;
-	workers.stream().filter(isTeamMember.and(isYoungerThanSpecifiedAge)).forEach(w -> System.out.println(w.toString()));
+ public void printTeamMembersYoungerThan(int age) {
+	
+    	Predicate<Worker> isTeamMember = w -> w.isTeamMember(); //filter1 - team member (not manager)
+    	Predicate<Worker> isYoungerThanSpecifiedAge = e -> e.getAge() < age; //filter2 - younger than a specified age
+    	getWorkers()
+    		.stream()
+    		.filter(isTeamMember.and(isYoungerThanSpecifiedAge))
+    		.map(w -> w.getName())
+    		.forEach(System.out::println);
     }
 
     /**
@@ -174,35 +178,23 @@ public class Main {
     }
 
     /**
-     * Print the leader with the youngest team - user the mean age of the
+     * Print the leader with the youngest team - use the mean age of the
      * MEMBERS to determine team age
      */
     public void printLeaderWithYoungestTeam() {
-	//get all managers (names)
-	List<String> allManagers = workers.stream()
-		.map(w -> w.getManagerName())
-		.filter(value -> !value.isEmpty())
-		.distinct()
-		.collect(Collectors.toList()); 
-	
-	//get team ages for each manager
-	Map<String,Integer> leaders_and_collectiveTeamAges = new HashMap<String,Integer>();
-
-	
-	for(String manager: allManagers){
-	  int teamAgeSum=
-	    workers.stream()
-	    .filter(w -> w.getManagerName().equalsIgnoreCase(manager))
-	    .collect(Collectors.toList())
-	    .stream()
-	    .mapToInt(w -> w.getAge())
-	    .sum();
-	  
-	  leaders_and_collectiveTeamAges.put(manager, teamAgeSum);	    
-	}
-	
-	String leaderWithYoungestTeam = leaders_and_collectiveTeamAges.entrySet().stream().min((mangA, mangB) -> mangA.getValue() > mangB.getValue() ? 1 : -1).get().getKey();
-	System.out.println(leaderWithYoungestTeam);
+    	String teamLeader_with_youngestTeam = getWorkers().stream() 
+			.filter(w -> w.isTeamMember()) // filter out team members
+			.collect(Collectors.groupingBy(Worker::getManagerName )) //group by manager name (this returns a map of manager names:list of workers)
+			.entrySet() //get the entrySet to carry out more stream logic
+			.stream() //convert entry set to stream
+			.min((t1,t2) -> Double.compare( //find the min value using a comparator
+					t1.getValue().stream().mapToInt(m -> m.getAge()).average().getAsDouble(),  //get the average age of team1
+					t2.getValue().stream().mapToInt(m -> m.getAge()).average().getAsDouble()   //get the average age of team2
+					)
+			)
+			.get() //get 1st entry
+			.getKey(); // get the key of the first entry which will be the manager name
+	System.out.println(teamLeader_with_youngestTeam);
     }
 
     public List<Worker> getWorkers() {
