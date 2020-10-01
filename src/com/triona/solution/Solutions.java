@@ -18,11 +18,11 @@ import com.triona.company.Worker;
  * Feel free to use java 7 or java 8 idioms
  *
  */
-public class Main {
+public class Solutions {
 
     private List<Worker> workers;
 
-    public Main() {
+    public Solutions() {
 
 	workers = Arrays.asList(
 		new Worker("anne", 20, true, false, ""), 
